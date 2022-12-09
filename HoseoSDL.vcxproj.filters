@@ -365,7 +365,6 @@
     <None Include="3rdParty\SDL\lib\x64\SDL2_image.dll" />
     <None Include="3rdParty\SDL\lib\x64\SDL2_mixer.dll" />
     <None Include="3rdParty\SDL\lib\x64\SDL2_ttf.dll" />
-    <None Include="assets\example.tmx" />
     <None Include="assets\map01.dat" />
   </ItemGroup>
   <ItemGroup>

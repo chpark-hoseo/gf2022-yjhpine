@@ -3,8 +3,8 @@
 #include "SDLGameObject.h"
 #include "Game.h"
 
-SDLGameObject::SDLGameObject(const LoaderParams* pParams) :
-    GameObject(pParams), m_position(pParams->getX(), pParams->getY()),
+SDLGameObject::SDLGameObject(const LoaderParams* pParams) : GameObject(pParams), 
+    m_position(pParams->getX(), pParams->getY()),
     m_velocity(0, 0), m_acceleration(0,0) , m_gravity(0, 0.5), m_gravitySpeed(0, 0)
 {
     m_position.getX();
