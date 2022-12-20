@@ -5,15 +5,14 @@
 
 Player::Player(const LoaderParams* pParams) : SDLGameObject(pParams)
 {
-    playerCollider.x = m_position.getX();
-    playerCollider.y = m_position.getY();
     playerCollider.w = 32;
     playerCollider.h = 32;
     a = 0;
+    isjumping = false;
 }
 void Player::draw()
 {
-    //TheTextureManager::Instance()->draw("BG", -Camera.x, -Camera.y, LEVEL_WIDTH, LEVEL_HEIGHT, TheGame::Instance()->getRenderer(), SDL_FLIP_NONE);
+    TheTextureManager::Instance()->draw("BG", -Camera.x, -Camera.y, LEVEL_WIDTH, LEVEL_HEIGHT, TheGame::Instance()->getRenderer(), SDL_FLIP_NONE);
     drawmap();
 	SDLGameObject::draw(flip, m_position.getX() - Camera.x  , m_position.getY() - Camera.y);
 }
@@ -47,18 +46,18 @@ void Player::update()
         Camera.y = LEVEL_HEIGHT - Camera.h;
     }
     std::cout <<m_position.getX()<<"//"<< m_position.getY() << std::endl;
-
-    Gravity();
+     
+    if (isjumping == false)
+    {
+        Gravity();
+    }
 
     for (int a = 0; a < 1200; a++)
     {
         if (coll.check_collision(playerCollider, Brick[a]))
         {
-            m_velocity.setX(0);
             m_velocity.setY(0);
-            m_gravity.setY(0);
             m_gravitySpeed.setY(0);
-            m_acceleration.setX(0);
             m_acceleration.setY(0);
             std::cout << "충돌" << std::endl;
             break;
@@ -75,6 +74,15 @@ void Player::handleInput()
 
    if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_RIGHT)) {
        m_velocity.setX(5);
+       for (int a = 0; a < 1200; a++)
+       {
+           if (coll.check_collision(playerCollider, Brick[a]))
+           {
+               m_velocity.setX(0);
+               std::cout << "충돌" << std::endl;
+               break;
+           } 
+       }
        if (m_position.getX() + 32 > 1280)
        {
            m_velocity.setX(0);
@@ -85,6 +93,15 @@ void Player::handleInput()
    else m_velocity.setX(0);
    if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_LEFT)) {
        m_velocity.setX(-5);
+       for (int a = 0; a < 1200; a++)
+       {
+           if (coll.check_collision(playerCollider, Brick[a]))
+           {
+               m_velocity.setX(0);
+               std::cout << "충돌" << std::endl;
+               break;
+           }
+       }
        if (m_position.getX() < 0)
        {
            m_velocity.setX(0);
@@ -93,7 +110,6 @@ void Player::handleInput()
        m_currentFrame = ((SDL_GetTicks() / 100) % 4);
    }
    if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_UP)) {
-       m_velocity.setY(-4);
        if (m_position.getY() + 32 > 960)
        {
            m_velocity.setY(0);
@@ -103,18 +119,16 @@ void Player::handleInput()
    else m_velocity.setY(0);
 
    if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_DOWN)) {
-       m_velocity.setY(4);
        if (m_position.getY() < 0)
        {
            m_velocity.setY(0);
-           m_acceleration.setY(0);
        }
        m_currentFrame = ((SDL_GetTicks() / 100) % 4);
    }
   if (TheInputHandler::Instance()->isKeyDown(SDL_SCANCODE_SPACE)) {
       isjumping = TheInputHandler::Instance()->isJumping();
       m_currentFrame = 5 + ((SDL_GetTicks() / 400) % 3);
-      if (isjumping == true) 
+      if (isjumping == true)
       { 
          Jumping();
       }
@@ -123,7 +137,7 @@ void Player::handleInput()
 void Player::clean() {}
 void Player::Jumping()
 {
-    m_acceleration.setY(-20);
+    m_acceleration.setY(-15);
     isjumping = false;
 }
 void Player::loadMap(const char* name)
@@ -174,7 +188,6 @@ void Player::drawmap()
 }
 void Player::initmap(SDL_Rect src_brick)
 {
-    //SDL_RenderFillRect(TheGame::Instance()->getRenderer(), &Brick[a]);
     Brick[a++] = src_brick;
     if (a == 1199)
     {
